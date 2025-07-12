@@ -2,14 +2,10 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
-import { AuthModule } from './auth/auth.module';
-import { InventoryModule } from './inventory/inventory.module';
-import { OrdersModule } from './orders/orders.module';
-import { ProductsModule } from './products/products.module';
-import { CategoriesModule } from './categories/categories.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as dotenv from 'dotenv';
+import { AuthModule } from './auth/auth.module';
 dotenv.config();
 
 @Module({
@@ -22,16 +18,12 @@ dotenv.config();
       username: process.env.POSTGRES_USER,
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DB,
-      entities: [],
-      synchronize: false, // set false in production
-      logging: true,  // set false in production
+      autoLoadEntities: true,
+      synchronize: true, // set false in production
+      logging: true, // set false in production
     }),
     UsersModule,
-    AuthModule,
-    InventoryModule,
-    OrdersModule,
-    ProductsModule,
-    CategoriesModule,
+    AuthModule
   ],
   controllers: [AppController],
   providers: [AppService],
