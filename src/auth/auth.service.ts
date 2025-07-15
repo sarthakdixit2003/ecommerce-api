@@ -26,7 +26,6 @@ export class AuthService {
     async registerUser(dto: RegisterUserDto): Promise<Partial<User>> {
         try {
             const { password, ...userDetails } = dto;
-            const saltRounds = 10;
             const passwordHash = await this.passwordService.createHash(password);
             const newUser = await this.userService.createUser({...userDetails, passwordHash});
 

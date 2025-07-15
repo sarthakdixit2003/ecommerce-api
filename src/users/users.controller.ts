@@ -1,10 +1,9 @@
-import { Body, Controller, Post } from '@nestjs/common';
-import { RegisterUserDto } from './dtos/register-user.dto';
+import { Controller, Get, Request, UseGuards } from '@nestjs/common';
 
 @Controller('users')
 export class UsersController {
-    @Post()
-    getAllUsers(@Body() body: RegisterUserDto): string {
+    @Get()
+    getAllUsers(@Request() request: Request): string {
         return 'Hello from users!';
     }
 }

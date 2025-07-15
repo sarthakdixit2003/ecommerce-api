@@ -33,6 +33,6 @@ export const RefreshTokenService: Provider = {
   ],
   controllers: [AuthController],
   providers: [AuthService, RefreshTokenService, passwordService],
-  exports: [RefreshTokenService]
+  exports: [RefreshTokenService, JwtModule]
 })
 export class AuthModule {}
