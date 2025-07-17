@@ -11,7 +11,7 @@ export const RefreshTokenService: Provider = {
   useFactory: (config: ConfigService) => {
     return new JwtService({
       secret: config.get<string>('JWT_REFRESH_SECRET_KEY'),
-      signOptions: { expiresIn: config.get<string>('JWT_REFRESH_EXPIRE_TIME') }
+      signOptions: { expiresIn: config.get<string>('JWT_REFRESH_EXPIRE_TIME') },
     });
   },
   inject: [ConfigService],
@@ -19,20 +19,20 @@ export const RefreshTokenService: Provider = {
 
 @Module({
   imports: [
-    UsersModule, 
+    UsersModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         return {
           global: true,
           secret: config.get<string>('JWT_SECRET_KEY'),
-          signOptions: { expiresIn: config.get<string>('JWT_EXPIRY_TIME') }
-        }
+          signOptions: { expiresIn: config.get<string>('JWT_EXPIRY_TIME') },
+        };
       },
-    })
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService, RefreshTokenService, passwordService],
-  exports: [RefreshTokenService, JwtModule]
+  exports: [RefreshTokenService, JwtModule],
 })
 export class AuthModule {}

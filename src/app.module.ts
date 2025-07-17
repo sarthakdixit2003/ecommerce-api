@@ -23,15 +23,15 @@ import { APP_GUARD } from '@nestjs/core';
       logging: true, // set false in production
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [
-    AppService, 
+    AppService,
     {
       provide: APP_GUARD,
-      useClass: AuthGuard,    // now applies to every controller
-    }
+      useClass: AuthGuard, // now applies to every controller
+    },
   ],
 })
 export class AppModule {}

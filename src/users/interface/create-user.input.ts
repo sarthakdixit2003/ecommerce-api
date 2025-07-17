@@ -1,5 +1,5 @@
 export interface createUserInput {
-    email: string;
-    name: string;
-    passwordHash: string;
+  email: string;
+  name: string;
+  passwordHash: string;
 }

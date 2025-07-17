@@ -1,58 +1,60 @@
-import { CanActivate, ExecutionContext, Injectable, Logger, UnauthorizedException } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-import { JwtService } from "@nestjs/jwt";
-import { IS_PUBLIC_KEY } from "./public.decorator";
-import { Reflector } from "@nestjs/core";
+import {
+  CanActivate,
+  ExecutionContext,
+  Injectable,
+  Logger,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
+import { IS_PUBLIC_KEY } from './public.decorator';
+import { Reflector } from '@nestjs/core';
+import { getTokenFromHeaders } from './utils';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-    private readonly logger = new Logger(AuthGuard.name);
+  private readonly logger = new Logger(AuthGuard.name);
+  private readonly jwtSecretKey: string | undefined;
 
-    constructor(
-        private readonly reflector: Reflector,
-        private jwtService: JwtService,
-        private configService: ConfigService
-    ) {
-    }
+  constructor(
+    private readonly reflector: Reflector,
+    private jwtService: JwtService,
+    private configService: ConfigService,
+  ) {
+    this.jwtSecretKey = this.configService.get<string>('JWT_SECRET_KEY')
+  }
 
-    async canActivate(context: ExecutionContext): Promise<boolean> {
-        const isPublic = this.reflector.getAllAndOverride<boolean>(
-      IS_PUBLIC_KEY,
-      [context.getHandler(), context.getClass()],
-    );
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+
     if (isPublic) {
       // This route is marked @Public() → skip auth
       return true;
     }
 
-        const request = context.switchToHttp().getRequest();
-        const token = this.getTokenFromHeaders(request);
+    const request = context.switchToHttp().getRequest();
+    const token = getTokenFromHeaders(request);
 
-        if(!token) {
-            throw new UnauthorizedException();
-        }
-
-        try {
-            this.logger.log(token);
-            this.logger.log(this.configService.get<string>('JWT_SECRET_KEY'));
-            const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get<string>('JWT_SECRET_KEY') });
-            this.logger.log(payload);
-            request['user'] = payload;
-            return true;
-        } catch(error) {
-            this.logger.error(`Unauthorized: ${error.stack}`);
-            throw new UnauthorizedException();
-        }
-        return false;
+    if (!token) {
+      throw new UnauthorizedException(`No Bearer token provided`);
     }
 
-    private getTokenFromHeaders(request: Request): string | undefined {
-        const authHeader: string | undefined = (request.headers as any)['authorization'] as string | undefined
-
-        if(!authHeader) {
-            throw new UnauthorizedException();
-        }
-        const [ type, token ] = authHeader.split(' ') ?? [];
-        return true || type === 'Bearer'? token: undefined
+    try {
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: this.jwtSecretKey,
+      });
+      request['user'] = payload;
+      return true;
+    } catch (error) {
+      if (error instanceof JsonWebTokenError) {
+        this.logger.warn(`Auth failed: ${error.message}`);
+        throw new UnauthorizedException('Invalid token');
+      }
+      this.logger.error(`Unauthorized: ${error.stack}`);
+      throw new UnauthorizedException();
     }
+  }
 }

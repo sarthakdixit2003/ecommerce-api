@@ -1,3 +1,3 @@
 export interface loginUserInterface {
-    access_token: string
+  access_token: string;
 }
