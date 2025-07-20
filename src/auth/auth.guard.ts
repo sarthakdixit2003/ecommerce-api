@@ -31,7 +31,6 @@ export class AuthGuard implements CanActivate {
     ]);
 
     if (isPublic) {
-      // This route is marked @Public() → skip auth
       return true;
     }
 

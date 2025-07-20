@@ -7,6 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { AuthGuard } from './auth/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { CategoriesModule } from './categories/categories.module';
+import { ProductsModule } from './products/products.module';
+import { OrdersModule } from './orders/orders.module';
+import { OrderItemsModule } from './order-items/order-items.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -24,6 +29,11 @@ import { APP_GUARD } from '@nestjs/core';
     }),
     UsersModule,
     AuthModule,
+    CategoriesModule,
+    ProductsModule,
+    OrdersModule,
+    OrderItemsModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [

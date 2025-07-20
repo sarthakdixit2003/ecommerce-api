@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { RolesGuard } from 'src/auth/roles.guard';
+import { Order } from 'src/orders/entities/order.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
