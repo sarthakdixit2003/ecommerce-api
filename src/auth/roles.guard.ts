@@ -43,7 +43,7 @@ export class RolesGuard implements CanActivate {
 				throw error;
 			}
       this.logger.error(`Internal Server Error: ${error.stack}`);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(error.message);
     }
   }
 }

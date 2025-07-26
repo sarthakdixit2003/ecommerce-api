@@ -23,7 +23,7 @@ export class CategoriesService {
             return categories;
         } catch(error: any) {
             this.logger.error(`Unable to get categories: ${error.stack}`);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(error.message);
         }
     }
 
@@ -37,17 +37,36 @@ export class CategoriesService {
             return await this.categoryRepository.findOne({where: { id: categoryIdDto.id }})
         } catch(error) {
             this.logger.error(`Unable to fetch category by id-${categoryIdDto.id}: ${error.stack}`);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(error.message);
         }
     }
 
+    /**
+     * 
+     * @param categoryNameDto 
+     * @returns Category object with matching name
+     */
+    async getCategoryByName(categoryNameDto: CategoryNameDto): Promise<Category | null> {
+        try {
+            return await this.categoryRepository.findOneBy({name: categoryNameDto.name});
+        } catch(error: any) {
+            this.logger.error(`Unable to create new categoy: ${error.stack}`);
+            throw new InternalServerErrorException(error.message);
+        }
+    }
+
+    /**
+     * 
+     * @param categoryNameDto 
+     * @returns new Category
+     */
     async createCategory(categoryNameDto: CategoryNameDto): Promise<Category> {
         try {
             const category: Category = this.categoryRepository.create({ name: categoryNameDto.name });
             return await this.categoryRepository.save(category);
         } catch(error: any) {
             this.logger.error(`Unable to create new categoy: ${error.stack}`);
-            throw new InternalServerErrorException();
+            throw new InternalServerErrorException(error.message);
         }
     }
 }

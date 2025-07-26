@@ -2,6 +2,7 @@ import { FindManyOptions, FindOptions, ILike, In } from "typeorm";
 import { Product } from "./entities/product.entity";
 import { PaginationDto } from "src/commons/dtos/pagination.dto";
 import { ProductFilterDto } from "./dtos/product-filter.dto";
+import { UpdateProductDto } from "./dtos/update-product.dto";
 
 export const buildFindOptions = (page: PaginationDto, filters: ProductFilterDto): FindManyOptions<Product> => {
     const options: FindManyOptions<Product> = {

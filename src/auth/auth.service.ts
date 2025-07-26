@@ -74,7 +74,7 @@ export class AuthService {
         throw error;
       }
       this.logger.error(`Unable to login: ${error.stack}`);
-      throw new InternalServerErrorException();
+      throw new InternalServerErrorException(error.message);
     }
   }
 }
