@@ -15,7 +15,6 @@ export class RolesGuard implements CanActivate {
   private readonly logger = new Logger(RolesGuard.name);
  
   constructor(
-    private usersService: UsersService,
     private readonly reflector: Reflector
   ) {}
 

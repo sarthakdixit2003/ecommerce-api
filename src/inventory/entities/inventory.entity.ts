@@ -9,7 +9,7 @@ export class Inventory {
     @Column('int')
     quantity: number;
 
-    @OneToOne(() => Product, (product) => product.inventory)
+    @OneToOne(() => Product, (product) => product.inventory, { onDelete: 'CASCADE', onUpdate: 'CASCADE' })
     @JoinColumn()
     product: Product;
 }

@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import { FindManyOptions, FindOptionsWhere, Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, FindManyOptions, Repository, UpdateResult } from 'typeorm';
 import { Product } from './entities/product.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaginationDto } from 'src/commons/dtos/pagination.dto';
@@ -13,6 +13,7 @@ import { InventoryService } from 'src/inventory/inventory.service';
 import { Inventory } from 'src/inventory/entities/inventory.entity';
 import { UpdateProductDto } from './dtos/update-product.dto';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { DeleteProductDto } from './dtos/delete-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -82,6 +83,11 @@ export class ProductsService {
         }
     }
 
+    /**
+     * 
+     * @param updateProductDto 
+     * @returns UpdateResult object
+     */
     async updateProduct(updateProductDto: UpdateProductDto): Promise<UpdateResult> {
         try {
             const { id, inventoryItems: items, category: categoryStr, ...rest } = updateProductDto;
@@ -102,6 +108,20 @@ export class ProductsService {
             return await this.productRepository.update(updateProductDto.id, updatedParams)
         } catch(error: any) {
             this.logger.error(`Unable to update product: ${error.stack}`);
+            throw new InternalServerErrorException(error.message);
+        }
+    }
+
+    /**
+     * 
+     * @param deleteProductDto 
+     * @returns DeleteResult object
+     */
+    async deleteProduct(deleteProductDto: DeleteProductDto): Promise<DeleteResult> {
+        try {
+            return await this.productRepository.delete({ id: deleteProductDto.id })
+        } catch(error: any) {
+            this.logger.error(`Unable to delete product ${deleteProductDto.id}`);
             throw new InternalServerErrorException(error.message);
         }
     }
