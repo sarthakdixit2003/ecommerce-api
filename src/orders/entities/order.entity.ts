@@ -1,13 +1,7 @@
 import { OrderItem } from "src/order-items/entities/order-item.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-
-enum status_enum {
-    Pending,
-    Paid,
-    Shipped,
-    Cancelled
-}
+import { status_enum } from "../enums/status.enum";
 
 @Entity()
 export class Order {
@@ -22,6 +16,9 @@ export class Order {
 
     @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
     items: OrderItem[];
+
+    @Column('decimal', { default: 0 })
+    total: number;
 
     @CreateDateColumn()
     createdAt: Date;
