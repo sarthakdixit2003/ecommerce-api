@@ -74,7 +74,8 @@ export class ProductsService {
             if(!category) {
                 throw new InternalServerErrorException(`Category with id-${createProductDto.category} does not exist`);
             }
-            const inventory: Inventory = await this.inventoryService.createInventory({ quantity: createProductDto.inventoryItems })
+            const inventory = new Inventory();
+            inventory.quantity = createProductDto.inventoryItems;
             const product: Product = this.productRepository.create({ name: createProductDto.name, description: createProductDto.description, price: createProductDto.price, category: category, inventory: inventory });
             return await this.productRepository.save(product);            
         } catch(error: any) {

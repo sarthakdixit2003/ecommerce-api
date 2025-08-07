@@ -26,7 +26,7 @@ export class ProductsController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   async getProductById(@Param('id') productIdDto: ProductIdDto): Promise<Product | null> {
-    return this.getProductById(productIdDto);
+    return this.productsService.getProductsById(productIdDto);
   }
 
   @Post('create')

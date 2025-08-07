@@ -5,10 +5,17 @@ import { InventoryService } from './inventory.service';
 describe('InventoryController', () => {
   let controller: InventoryController;
 
+  const mockInventoryService = {};
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [InventoryController],
-      providers: [InventoryService],
+      providers: [
+        {
+          provide: InventoryService,
+          useValue: mockInventoryService,
+        },
+      ],
     }).compile();
 
     controller = module.get<InventoryController>(InventoryController);
