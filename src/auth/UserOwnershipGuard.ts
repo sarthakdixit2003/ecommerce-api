@@ -2,7 +2,7 @@ import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from "@
 
 // Ensure route decorated with this guard contains "userId" param
 @Injectable()
-export class OrderOwnershipGuard implements CanActivate {
+export class UserOwnershipGuard implements CanActivate {
     constructor() {}
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest();

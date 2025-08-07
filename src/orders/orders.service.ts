@@ -8,7 +8,8 @@ import { findOptionsWithUserId, validateOrderStatusUpdate } from './utils';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { OrderIdDto } from './dtos/order-id.dto';
-import { OrderPatchDto } from './dtos/order-patch.dto';
+import { OrderPatchStatusDto } from './dtos/order-patch-status.dto';
+import { OrderPatchTotalDto } from './dtos/order-patch-total.dto';
 
 @Injectable()
 export class OrdersService {
@@ -76,19 +77,27 @@ export class OrdersService {
      * @param orderPatchDto 
      * @returns 
      */
-    async patchOrder(orderPatchDto: OrderPatchDto): Promise<UpdateResult> {
+    async patchOrderStatus(orderPatchStatusDto: OrderPatchStatusDto): Promise<UpdateResult> {
         try {
-            const order: Order | null = await this.ordersRepository.findOneBy({ id: orderPatchDto.id });
+            const order: Order | null = await this.ordersRepository.findOneBy({ id: orderPatchStatusDto.id });
             if(!order) {
                 throw new NotFoundException(`Order not found!`);
             }
-            const validUpdate = validateOrderStatusUpdate(order, orderPatchDto);
-            return await this.ordersRepository.update({ id: order.id }, { status: orderPatchDto.status });
+            const validUpdate = validateOrderStatusUpdate(order, orderPatchStatusDto);
+            return await this.ordersRepository.update({ id: order.id }, { status: orderPatchStatusDto.status });
         } catch (error: any) {
             this.logger.error(`Unable to patch order: ${error.stack}`);
             if(error instanceof NotFoundException || error instanceof BadRequestException) {
                 throw error;
             }
+            throw new InternalServerErrorException(error.message);
+        }
+    }
+
+    async patchOrderTotal(orderPatchTotalDto: OrderPatchTotalDto): Promise<UpdateResult> {
+        try {
+            return await this.ordersRepository.increment({ id: orderPatchTotalDto.id }, 'total', orderPatchTotalDto.diff)
+        } catch (error: any) {
             throw new InternalServerErrorException(error.message);
         }
     }

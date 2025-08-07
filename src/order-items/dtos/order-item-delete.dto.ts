@@ -1,11 +1,7 @@
 import { IsNotEmpty, IsString } from "class-validator";
 
-export class OrderItemIdDto {
+export class OrderItemDeleteDto {
     @IsString()
     @IsNotEmpty()
     id: string;
-
-    @IsString()
-    @IsNotEmpty()
-    userId: string;
 }
