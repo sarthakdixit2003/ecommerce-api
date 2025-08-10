@@ -9,19 +9,25 @@ import { RegisterUserDto } from 'src/users/dtos/register-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/entities/user.entity';
 import { LoginUserDto } from 'src/users/dtos/login-user.dto';
-import { JwtService } from '@nestjs/jwt';
+import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
 import { passwordService } from './password.service';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
+  private readonly refreshTokenSecretKey: string | undefined;
 
   constructor(
     private userService: UsersService,
     private jwtService: JwtService,
     private passwordService: passwordService,
+    private configService: ConfigService,
     @Inject('REFRESH_JWT_SERVICE') private readonly refreshJwtService: JwtService,
-  ) {}
+  ) {
+    this.refreshTokenSecretKey = configService.get<string>('JWT_REFRESH_SECRET_KEY')
+  }
 
   /**
    * Registers user by creating a password hash
@@ -74,6 +80,28 @@ export class AuthService {
         throw error;
       }
       this.logger.error(`Unable to login: ${error.stack}`);
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+    try {
+      const refreshToken: string = refreshTokenDto.refreshToken;
+      const jwtPayload = await this.refreshJwtService.verifyAsync(refreshToken, {
+        secret: this.refreshTokenSecretKey
+      });
+
+      const { iat: _omit_iat, exp: _omit_exp, ...payload } = jwtPayload;
+
+      const newAccessToken = await this.jwtService.signAsync(payload);
+      const newRefreshToken = await this.refreshJwtService.signAsync(payload);
+
+      return { access_token: newAccessToken, refreshToken: newRefreshToken };
+    } catch (error: any) {
+      this.logger.log(`Unable to refresh token: ${error.stack}`);
+      if(error instanceof JsonWebTokenError) {
+        throw new UnauthorizedException(`Refresh token expired or invalid: ${error.message}`);
+      }
       throw new InternalServerErrorException(error.message);
     }
   }

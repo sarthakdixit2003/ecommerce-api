@@ -50,7 +50,7 @@ export class AuthGuard implements CanActivate {
     } catch (error) {
       if (error instanceof JsonWebTokenError) {
         this.logger.warn(`Auth failed: ${error.message}`);
-        throw new UnauthorizedException('Invalid token');
+        throw new UnauthorizedException(`Access token expired or invalid: ${error.message}`);
       }
       this.logger.error(`Unauthorized: ${error.stack}`);
       throw new UnauthorizedException();

@@ -1,10 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from 'src/users/dtos/register-user.dto';
 import { User } from 'src/users/entities/user.entity';
 import { LoginUserDto } from 'src/users/dtos/login-user.dto';
 import { loginUserInterface } from './interfaces/login-user.interface';
 import { IsPublic } from './public.decorator';
+import { RefreshTokenDto } from './dtos/refresh-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -23,4 +24,12 @@ export class AuthController {
   loginUser(@Body() dto: LoginUserDto): Promise<loginUserInterface> {
     return this.authService.loginUser(dto);
   }
+
+  @IsPublic()
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  refreshTokens(@Body() refreshTokenDto :RefreshTokenDto) {
+    return this.authService.refreshTokens(refreshTokenDto);
+  }
 }
+
