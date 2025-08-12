@@ -127,6 +127,14 @@ To run the tests, use the following command:
 npm run test
 ```
 
+## Postman Collection
+
+https://sarthakdixit-5186850.postman.co/workspace/Sarthak-Dixit's-Workspace~d1c21586-1c79-4f39-82bf-f4d8bf11f723/collection/46289134-a0f148a8-3e4b-4512-85db-dbfa298c4f04?action=share&creator=46289134&active-environment=46289134-524459cc-4534-4ffa-a97d-28b0034597e1
+
+## Deployed API platform (need to update postgres after 10/Sep/2025) 
+
+base_url = https://ecommerce-api-kmqk.onrender.com
+
 ## License
 
 This project is UNLICENSED.
